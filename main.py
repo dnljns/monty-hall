@@ -1,31 +1,27 @@
 import random
 
-test_trials = 10000
+test_trials = 1000000
 win = "ferrari"
 lose = "goat"
+door_count = 3
 
 def setup_doors():
-    doors = [lose, lose, lose]
-    doors[random.randint(0, 2)] = win
+    doors = [lose] * door_count
+    doors[random.randint(0, door_count - 1)] = win
     return tuple(doors)
 
-def pick_goat(doors, choice):
-    choices = [0, 1, 2]
+def pick_goats(doors, choice):
+    choices = list(range(door_count))
     choices.remove(choice)
-    if doors[choice] == win:
-        return random.choice(choices)
-    else:
-        if doors[choices[0]] == win:
-            return choices[1]
-        else:
-            return choices[0]
+    if doors[choice] == win: # Don't show this random door
+        choices.remove(random.choice(choices))
+    return list([ choice for choice in choices if doors[choice] != win ])
 
 def game(switch):
     doors = setup_doors()
-    choices = [0, 1, 2]
+    choices = list(range(door_count))
     choice = random.choice(choices)
-    goat = pick_goat(doors, choice)
-    choices.remove(goat)
+    choices = list(set(choices) - set(pick_goats(doors, choice)))
     choices.remove(choice)
     if switch:
         choice = choices[0]
